@@ -1,6 +1,6 @@
 version: "2"
 services:
-  nexus:
+  traccar:
     image: vitalidze/traccar-web:0.12.3-h2
     container_name: traccar-web
     restart: unless-stopped
