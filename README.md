@@ -33,7 +33,7 @@ docker-compose up -d
 
 #### MySQL
 
-For production databases it is highly recommended to run a separate database server, like MySQL. Download [docker-compose.yml](https://github.com/vitalidze/traccar-web-docker/raw/master/h2/docker-compose.yml), put it some folder and run it by issuing following command:
+For production databases it is highly recommended to run a separate database server, like MySQL. Download [docker-compose.yml](https://github.com/vitalidze/traccar-web-docker/raw/master/mysql/docker-compose.yml), put it some folder and run it by issuing following command:
 
 ```console
 docker-compose up -d
