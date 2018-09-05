@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+
+<properties>
+
+    <!--
+
+    This is the main configuration file. All your configuration parameters should be placed in this file.
+
+    Default configuration parameters are located in the "default.xml" file. You should not modify it to avoid issues
+    with upgrading to a new version. Parameters in the main config file override values in the default file. Do not
+    remove "config.default" parameter from this file unless you know what you are doing.
+
+    For list of available parameters see following page: https://www.traccar.org/configuration-file/
+
+    -->
+
+    <entry key="config.default">./conf/default.xml</entry>
+
+    <entry key='web.type'>old</entry>
+    <entry key='web.application'>/opt/traccar/traccar-web.war</entry>
+
+    <entry key='database.driver'>org.h2.Driver</entry>
+    <entry key='database.url'>jdbc:h2:./data/database</entry>
+    <entry key='database.user'>sa</entry>
+    <entry key='database.password'></entry>
+
+    <entry key='event.enable'>false</entry>
+    <entry key='event.overspeedHandler'>false</entry>
+    <entry key='event.overspeed.notRepeat'>true</entry>
+    <entry key='event.motionHandler'>false</entry>
+    <entry key='event.geofenceHandler'>false</entry>
+    <entry key='event.alertHandler'>false</entry>
+    <entry key='event.ignitionHandler'>false</entry>
+    <entry key='event.statusHandler'>false</entry>
+    <entry key='event.maintenanceHandler'>false</entry>
+
+    <entry key='database.insertPosition'>
+        INSERT INTO positions (device_id, protocol, serverTime, time, valid, latitude, longitude, altitude, speed, course, address, other)
+        VALUES (:deviceId, :protocol, :now, :deviceTime, :valid, :latitude, :longitude, :altitude, :speed, :course, :address, :attributes);
+    </entry>
+
+    <entry key='database.selectLatestPositions'>
+        SELECT id, protocol, device_id AS deviceId, serverTime, time AS deviceTime, time AS fixTime,
+        valid, latitude, longitude, altitude, speed, course, address, other AS attributes
+        FROM positions WHERE id IN (SELECT latestPosition_id FROM devices);
+    </entry>
+
+    <entry key='database.updateLatestPosition'>
+        UPDATE devices SET latestPosition_id = :id WHERE id = :deviceId;
+    </entry>
+
+    <entry key='database.ignoreUnknown'>false</entry>
+
+    <entry key='database.selectUsersAll'>
+        SELECT u.id, u.login AS name, u.password AS hashedPassword, u.salt, u.email, u.readOnly AS readonly,
+        u.expirationDate AS expirationTime, u.blocked AS disabled, u.admin,
+        us.speedUnit, us.centerLatitude AS latitude, us.centerLongitude AS longitude,
+        us.zoomLevel AS zoom
+        FROM users AS u
+        LEFT OUTER JOIN user_settings us ON us.id = u.userSettings_id
+    </entry>
+
+    <entry key='database.loginUser'>
+        SELECT u.id, u.login AS name, u.password AS hashedPassword, u.salt, u.email, u.readOnly AS readonly,
+        u.expirationDate AS expirationTime, u.blocked AS disabled, u.admin,
+        us.speedUnit, us.centerLatitude AS latitude, us.centerLongitude AS longitude,
+        us.zoomLevel AS zoom
+        FROM users AS u
+        LEFT OUTER JOIN user_settings AS us ON us.id = u.userSettings_id
+        WHERE u.email = :email
+    </entry>
+
+    <entry key='database.selectServers'>
+        SELECT s.id, s.bingMapsKey AS bingKey,
+        us.speedUnit, us.centerLatitude AS latitude, us.centerLongitude AS longitude,
+        us.zoomLevel AS zoom
+        FROM application_settings AS s
+        LEFT OUTER JOIN user_settings AS us ON us.id = s.userSettings_id
+    </entry>
+
+    <entry key='database.selectDevicePermissions'>
+        SELECT u.id AS userId, d.id AS deviceId FROM users AS u, devices AS d WHERE u.admin = 1
+        UNION
+        SELECT ud.users_id AS userId, ud.devices_id AS deviceId FROM users_devices AS ud
+        INNER JOIN users AS u ON ud.users_id=u.id
+        WHERE u.admin=0 AND u.readOnly=0
+    </entry>
+
+</properties>

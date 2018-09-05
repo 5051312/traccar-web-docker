@@ -1,0 +1,16 @@
+version: "2"
+services:
+  nexus:
+    image: vitalidze/traccar-web:0.12.3-h2
+    container_name: traccar-web
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "2"
+    volumes:
+      - ./logs:/opt/traccar/logs
+      - ./data:/opt/traccar/data
+    ports:
+      - "8082:8082"
